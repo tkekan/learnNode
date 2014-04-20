@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Highcharts Example</title>
+
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src='data.json'> </script>
+        <script src="js/highcharts.js"></script>
+        <script src="js/exporting.js"></script>
+        <script type="text/javascript" charset="utf-8" src="./DataTables-1.9.4/media/js/jquery.dataTables.js"></script>
+        <table id="table_id" class="display">
+            <style type="text/css" title="currentStyle">
+    @import "./DataTables-1.9.4/media/css/demo_table.css";
+</style>
+        <script type="text/javascript">
+
+
+        var chartObject = {
+          "chart": {
+            "type": "column"
+          },
+          "title": {
+            "text": "Build Progress"
+          },
+          "xAxis": {
+            "categories": [ ],
+            labels: {
+                            rotation: -70,
+                            align: 'right',
+                            style: {
+                                fontSize: '11px',
+                                fontFamily: 'Verdana, sans-serif'
+                            }
+                        }
+          },
+          "yAxis": {
+            "title": {
+              "text": "seconds"
+            }
+          },
+          "series": [
+            {
+              "name": "Boot Time",
+              "data": [ ]
+            }
+          ]
+        };
+
+/*
+function tableCreate(){
+var body=document.getElementsByTagName('body')[0];
+var tbl=document.createElement('table');
+tbl.style.width='100%';
+tbl.setAttribute('border','1');
+var tbdy=document.createElement('tbody');
+for(var i=0;i<3;i++){
+    var tr=document.createElement('tr');
+    for(var j=0;j<2;j++){
+        if(i==2 && j==1){
+                break
+                 } else {
+        var td=document.createElement('td');
+        td.appendChild(document.createTextNode('\u0020'))
+        i==1&&j==1?td.setAttribute('rowSpan','2'):null;
+        tr.appendChild(td)
+        }
+    }
+    tbdy.appendChild(tr);
+}
+tbl.appendChild(tbdy);
+body.appendChild(tbl)
+}
+*/
+/*
+        $(function () {
+                $('#container').highcharts(chartObject);
+            });
+ */            
+
+var List = [];
+var text;
+
+function numToDot( num) {
+    var d = num%256;
+    for (var i = 3; i > 0; i--) 
+    { 
+        num = Math.floor(num/256);
+        d = num%256 + '.' + d;
+    }
+    return d;
+}
+
+
+function FindPortTypes(row, src)
+{
+    if(src) {
+        if(row.ip_proto == 17)
+            return row.udp_sport;
+        else if(row.ip_proto == 6)
+            return row.tcp_sport;
+        else
+            return "NA";
+    }
+    else {
+        if(row.ip_proto == 17)
+            return row.udp_dport;
+        else if(row.ip_proto == 6)
+            return row.tcp_dport;
+        else
+            return "NA";
+    }
+}
+
+        $( document ).ready(function() {
+                $.getJSON('my.json', function(data) {
+                    $.each(data, function(index, value) {
+                          List[index] = [];
+                          List[index].push(index+1);
+                          List[index].push(value.sig_priority);
+                          List[index].push(value.timestamp);
+                          List[index].push(numToDot(value.ip_src));
+                          List[index].push(FindPortTypes(value,true));
+                          List[index].push(numToDot(value.ip_dst));
+                          List[index].push(FindPortTypes(value,false));
+                          List[index].push(value.sig_name);
+
+                        });
+    //                $('#table_id').dataTable();
+    //             chartObject.xAxis.categories =  data.xAxis.categories;
+   //              chartObject.series[0].data =   data.series[0].data;
+                 //$('#container').highcharts(chartObject);
+                 $('#demo').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="example"></table>' );
+                 $('#table_id').dataTable( {
+                     "sDom": "<'row'<'span8'l><'span8'f>r>t<'row'<'span8'i><'span8'p>>",
+                    "aaData": List,
+                    "aoColumns": [
+                                    { "sTitle": "Id" },
+                                    { "STitle": "Pri"},
+                                    { "sTitle": "Data/Time" },
+                                    { "sTitle": "Src IP" },
+                                    { "STitle": "SPort"},
+                                    { "STitle": "Dst IP" },
+                                    { "STitle": "DPort"},
+                                    { "STitle": "Event Message"},
+                                ]
+    } );
+
+                // tableCreate();
+       // options.series[0].data = data;
+       // var chart = new Highcharts.Chart(options);
+    });
+});
+
+        </script>
+    </head>
+    <body>
+
+
+        <div id="container" style="max-width: 800px; height: 600px; margin: 0 auto"></div>
+    div.dataTables_length label {
+    width: 460px;
+    float: left;
+    text-align: left;
+   }
+ 
+div.dataTables_length select {
+    width: 75px;
+}
+ 
+div.dataTables_filter label {
+    float: right;
+    width: 460px;
+}
+ 
+div.dataTables_info {
+    padding-top: 8px;
+}
+ 
+div.dataTables_paginate {
+    float: right;
+    margin: 0;
+}
+ 
+table {
+    margin: 1em 0;
+    clear: both;
+}
+
+    </body>
+</html>

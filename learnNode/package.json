@@ -9,6 +9,7 @@
   "license": "Closed",
   "devDependencies": {
     "jsonfile": "~1.1.1",
-    "lazy"	:	"~1.0.11"
+    "lazy"	:	"~1.0.11",
+    "validator" : "~3.5.0"
   }
 }
